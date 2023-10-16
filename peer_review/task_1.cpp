@@ -4,37 +4,41 @@
 
 using namespace std::literals;
 
-std::vector<unsigned> user_pages;
-std::vector<unsigned> reading_pages_cnt_user;
+const int MAX_PAGES = 1000;
+const int MAX_USERS = 100000;
 
-template <typename T>
-inline void CheckSizeVect(std::vector<T>& check_vect, size_t check_index)
-{
-    if (check_vect.size() <= check_index)
-        check_vect.resize(check_index * 2, 0);
-}
+std::vector<unsigned> user_pages(MAX_USERS + 1);
+std::vector<unsigned> reading_pages_cnt_user(MAX_PAGES + 1);
 
 void ReadPageUser(unsigned user, unsigned number_page)
 {
-    CheckSizeVect(user_pages, user);
-
-    CheckSizeVect(reading_pages_cnt_user, number_page);
-
-    for (unsigned p = user_pages[user] + 1; p <= number_page; ++p)
+    if (user <= MAX_USERS && number_page <= MAX_PAGES)
     {
-        ++reading_pages_cnt_user[p];
-    }
+        for (unsigned p = user_pages[user] + 1; p <= number_page; ++p)
+        {
+            ++reading_pages_cnt_user[p];
+        }
 
-    user_pages[user] = number_page;
+        user_pages[user] = number_page;
+    }
+    else
+    {
+        throw std::range_error("Input data is out of range");
+    }
 }
 
 double PartReadersLess(unsigned user)
 {
-    CheckSizeVect(user_pages, user);
-
+    if (user > MAX_USERS)
+    {
+        throw std::range_error("Input data is out of range");
+    }
     if (user_pages[user])
     {
-        CheckSizeVect(reading_pages_cnt_user, user_pages[user]);
+        if (user_pages[user] > MAX_PAGES)
+        {
+            throw std::range_error("Data in user_pages is out of range");
+        }
 
         if (reading_pages_cnt_user[user_pages[user]] - 1)
         {
@@ -43,8 +47,10 @@ double PartReadersLess(unsigned user)
             return (total_user - (reading_pages_cnt_user[user_pages[user]] - 1)) / total_user;
         }
         else
+        {
             // Дочитал только пользователь
             return 1.0;
+        }
     }
     else
     {
