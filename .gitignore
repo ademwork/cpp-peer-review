@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/peer_review/.vs/peer_review
+/peer_review/peer_review.sln
+/peer_review/peer_review.vcxproj
+/peer_review/peer_review.vcxproj.filters
+/peer_review/peer_review.vcxproj.user
+/peer_review/x64/Debug
+/peer_review/task_2.cpp
+/peer_review/task_3.cpp
