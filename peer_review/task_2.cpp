@@ -170,7 +170,7 @@ std::string test_input =
 std::string test_output =
 {
     "Bad\nBad\nBad\nBad\nBad\nGood\nGood\n"
-};
+}; 
 
 
 
