@@ -8,12 +8,12 @@
 
 using namespace std;
 
-class Domain
+class Domain 
 {
     std::string domain_;
 public:
     template<typename Str>
-    Domain(Str&& new_domen)
+    Domain(Str&& new_domen) 
     {
         domain_ = "."s + forward<Str>(new_domen);
         std::reverse(domain_.begin(), domain_.end());
@@ -21,18 +21,12 @@ public:
 
     bool operator==(const Domain& other) const
     {
-        if (other.domain_ == domain_)
-            return true;
-        else
-            return false;
+        return (other.domain_ == domain_);
     }
 
-    bool operator> (const Domain& other) const
+    bool operator < (const Domain& rhs) const
     {
-        if (other.domain_ > domain_)
-            return true;
-        else
-            return false;
+        return (domain_ <  rhs.domain_);
     }
 
     bool IsSubdomain(const Domain& check_domain) const
@@ -50,14 +44,11 @@ public:
         }
         else
         {
-            auto check_beg_It = check_domain.domain_.begin();
-            auto check_end_It = check_domain.domain_.end();
-            auto forb_beg_It = domain_.begin();
-            auto forb_end_It = domain_.end();
+            size_t check_index = 0 , forbed_index = 0;
 
-            while (check_beg_It != check_end_It && forb_beg_It != forb_end_It)
+            while (check_index < check_domain.domain_.size() && forbed_index < domain_.size())
             {
-                if (*check_beg_It++ != *forb_beg_It++)
+                if (check_domain.domain_[check_index++] != domain_[forbed_index++])
                     return false;
             }
 
@@ -66,52 +57,29 @@ public:
     }
 };
 
-class DomainChecker
+class DomainChecker 
 {
     std::vector<Domain> reading_domain_;
 public:
     template <typename InputIt>
-    DomainChecker(InputIt first, InputIt last)
+    DomainChecker(InputIt first, InputIt last) : reading_domain_(first, last)
     {
-        auto size_vect = std::distance(first, last);
-        reading_domain_.reserve(size_vect);
-        while (first != last)
-        {
-            reading_domain_.push_back(move(*first++));
-        }
-
-        sort(reading_domain_.begin(), reading_domain_.end(), [](const auto& lhr, const auto& rhl)
-            {
-                return lhr > rhl;
-            });
+        sort(reading_domain_.begin(), reading_domain_.end());
         auto erase_it = unique(reading_domain_.begin(), reading_domain_.end(), [](const auto& lhr, const auto& rhl)
             {
-                if (lhr.IsSubdomain(rhl))
-                    return true;
-                else
-                    return false;
+                return lhr.IsSubdomain(rhl);
             });
-        reading_domain_.erase(erase_it, reading_domain_.end());
+        reading_domain_.erase(erase_it,reading_domain_.end());
     }
 
-    bool IsForbidden(const Domain& check_domain) const
+    bool IsForbidden(const Domain &check_domain) const
     {
         if (reading_domain_.empty() == true)
         {
             return false;
         }
 
-        auto search_it = upper_bound(reading_domain_.begin(), reading_domain_.end(), check_domain, [](const Domain& a, const Domain& b)
-            {
-                if (a > b)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            });
+        auto search_it = upper_bound(reading_domain_.begin(), reading_domain_.end(), check_domain);
 
         if (search_it == reading_domain_.begin())
         {
@@ -136,7 +104,7 @@ std::vector<Domain>ReadDomains(istream& in, size_t number)
         {
             in >> query_type;
         }
-
+        
         reading_domain.push_back(Domain(query_type));
     }
 
@@ -164,19 +132,39 @@ Number ReadNumberOnLine(istream& input)
 
 std::string test_input =
 {
-    "4\n gdz.ru maps.me m.gdz.ru com 7\n gdz.ru gdz.com m.maps.me alg.m.gdz.ru maps.com maps.ru gdz.ua"
+    "4\n gdz.ru maps.me m.gdz.ru com 7\n gdz.ru gdz.com m.maps.me alg.m.gdz.ru maps.com maps.ru gdz.ua" 
 };
 
 std::string test_output =
 {
     "Bad\nBad\nBad\nBad\nBad\nGood\nGood\n"
-}; 
+};
 
+void UnitTestDomen()
+{
+    Domain dom_test("com"s);
+
+    assert(dom_test.IsSubdomain("abc.com"s) == true);
+    assert(dom_test.IsSubdomain("com.ru"s) == false);
+    assert(dom_test.IsSubdomain(""s) == false);
+    assert(dom_test.IsSubdomain("com.com.com"s) == true);
+}
+
+void UnitTestChecker()
+{
+    const std::vector<Domain> forbidden_domains = {"com"s, "opq.ru"s};
+    DomainChecker checker(forbidden_domains.begin(), forbidden_domains.end());
+
+    assert(checker.IsForbidden("abc.com"s) == true);
+    assert(checker.IsForbidden("abc.def.com"s) == true);
+    assert(checker.IsForbidden("abc.ru"s) == false);
+    assert(checker.IsForbidden("com.opq.ru"s) == true);
+}
 
 
 void UnitTest()
 {
-    std::stringstream s_in, s_out;
+    std::stringstream s_in,s_out;
     s_in << test_input;
 
     const std::vector<Domain> forbidden_domains = ReadDomains(s_in, ReadNumberOnLine<size_t>(s_in));
@@ -191,16 +179,17 @@ void UnitTest()
 }
 
 
-
-int main()
+int main() 
 {
+    UnitTestDomen();
+    UnitTestChecker();
     UnitTest();
 
     const std::vector<Domain> forbidden_domains = ReadDomains(cin, ReadNumberOnLine<size_t>(cin));
     DomainChecker checker(forbidden_domains.begin(), forbidden_domains.end());
 
     const std::vector<Domain> test_domains = ReadDomains(cin, ReadNumberOnLine<size_t>(cin));
-    for (const Domain& domain : test_domains)
+    for (const Domain& domain : test_domains) 
     {
         cout << (checker.IsForbidden(domain) ? "Bad"sv : "Good"sv) << endl;
     }
