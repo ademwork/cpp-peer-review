@@ -22,7 +22,7 @@ struct ParamCountry
 
 
 
-// Дана функция ParseCitySubjson, обрабатывающая JSON-объект со списком городов конкретной страны:
+// Р”Р°РЅР° С„СѓРЅРєС†РёСЏ ParseCitySubjson, РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‰Р°СЏ JSON-РѕР±СЉРµРєС‚ СЃРѕ СЃРїРёСЃРєРѕРј РіРѕСЂРѕРґРѕРІ РєРѕРЅРєСЂРµС‚РЅРѕР№ СЃС‚СЂР°РЅС‹:
 void ParseCitySubjson(vector<City>& cities, const Json& json, const ParamCountry&  param_country) 
 {
     for (const auto& city_json : json.AsList()) 
@@ -33,7 +33,7 @@ void ParseCitySubjson(vector<City>& cities, const Json& json, const ParamCountry
     }
 }
 
-// ParseCitySubjson вызывается только из функции ParseCountryJson следующим образом:
+// ParseCitySubjson РІС‹Р·С‹РІР°РµС‚СЃСЏ С‚РѕР»СЊРєРѕ РёР· С„СѓРЅРєС†РёРё ParseCountryJson СЃР»РµРґСѓСЋС‰РёРј РѕР±СЂР°Р·РѕРј:
 void ParseCountryJson(vector<Country>& countries, vector<City>& cities, const Json& json) 
 {
     for (const auto& country_json : json.AsList()) 
