@@ -9,7 +9,7 @@
 
 struct ParamCountry
 {
-    ParamCountry(Country& param) : name(param.country.name), iso_code(param.iso_code), phone_code(param.phone_code) , time_zone(param.phone_code), languages(param.languages)
+    ParamCountry(Country& param) : name(param.country.name), iso_code(param.iso_code), phone_code(param.phone_code) , time_zone(param.time_zone), languages(param.languages)
     {
 
     }
