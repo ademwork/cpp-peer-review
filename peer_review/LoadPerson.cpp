@@ -85,7 +85,7 @@ DBQuery queryDB(DBHandler &db, ParamQuery param_query)
 }
 
 
-std::vector<Person> LoadPerson(const DBQuery &query)
+std::vector<Person> ReadPersonsFromDB(DBHandler &db,const DBQuery &query)
 {
     std::vector<Person> persons;
     for (auto [name, age] : db.LoadRows<std::string, int>(query))
@@ -97,9 +97,9 @@ std::vector<Person> LoadPerson(const DBQuery &query)
 
 
 
-std::vector<Person> LoadPersons(ParamConnectDB param_connect, int min_age, ParamQuery param_query)
+std::vector<Person> LoadPersons(ParamConnectDB param_connect, ParamQuery param_query)
 {
-    if (db_allow_exceptions == false)
+    if (param_connect.db_allow_exceptions == false)
     {
         return {};
     }
@@ -114,6 +114,6 @@ std::vector<Person> LoadPersons(ParamConnectDB param_connect, int min_age, Param
     {
         DBQuery query = queryDB(db, param_query);
 
-        return LoadPerson(query);
+        return ReadPersonsFromDB(db,query);
     }
 }
