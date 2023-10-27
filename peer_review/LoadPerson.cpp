@@ -5,13 +5,14 @@ using namespace std::literals;
 
 struct ParamConnectDB
 {
-    std::string_view db_name;
+    std::string db_name;
     int db_connection_timeout;
     bool db_allow_exceptions;
     DBLogLevel db_log_level;
 
+    // string_view сохраняется в структуре как string.
     ParamConnectDB& SetDbName(std::string_view db_name) {
-        this->db_name = db_name;
+        this->db_name = std::move(std::string{db_name});
         return *this;
     }
 
@@ -58,7 +59,7 @@ struct ParamQuery
 
 DBHandler ConnectDB(ParamConnectDB param_connect)
 {
-    DBConnector connector(true, param_connect.db_log_level);
+    DBConnector connector(param_connect.db_allow_exceptions, param_connect.db_log_level);
     
     DBHandler db;
 
@@ -99,14 +100,9 @@ std::vector<Person> ReadPersonsFromDB(DBHandler &db,const DBQuery &query)
 
 std::vector<Person> LoadPersons(ParamConnectDB param_connect, ParamQuery param_query)
 {
-    if (param_connect.db_allow_exceptions == false)
-    {
-        return {};
-    }
-
     DBHandler db = ConnectDB(param_connect);
 
-    if (db.IsOK() == false) 
+    if (param_connect.db_allow_exceptions == false && db.IsOK() == false)
     {
         return {};
     }
